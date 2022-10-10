@@ -92,9 +92,9 @@ Cправка
         dest: /var/www/html/index.htm
 
 МОдуль **service** и **systemd** запускает службу операционной системы
-  - name: Make sure a service is running
-    service:
-      state: stopped
-      name:  nginx
+    - name: Make sure a service is running
+      service:
+        state: stopped
+        name:  nginx
 В любой блок можно добавить условия его исполнения
     when: условие
