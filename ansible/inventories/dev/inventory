@@ -1,6 +1,17 @@
+[web-servers:children]
+web1
+web2
+web3
+lb1
 
-[main_server]
-195.140.147.167
-[corp_servers]
-#195.140.147.167
-195.140.147.176
+[web1]
+web1   ansible_ssh_port=1022
+
+[web2]
+web2  ansible_ssh_port=2022
+
+[web3]
+web3  ansible_ssh_port=4022
+
+[lb1]
+lb1  ansible_ssh_port=3022
