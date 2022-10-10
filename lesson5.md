@@ -92,6 +92,7 @@ Cправка
         dest: /var/www/html/index.htm
 
 МОдуль **service** и **systemd** запускает службу операционной системы
+
     - name: Make sure a service is running
       service:
         state: stopped
