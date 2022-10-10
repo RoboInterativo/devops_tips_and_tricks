@@ -9,4 +9,5 @@
 Для хостов web1-web3 Изменить файл /var/www/html/index.html
 Указать в нем имя хоста. Можно использовать модуль **template**
 Сделать шабон с таким сожержимым
+
     Running on server {{ inventory_hostname }}
