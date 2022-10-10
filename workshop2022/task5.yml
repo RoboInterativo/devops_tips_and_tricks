@@ -1,0 +1,8 @@
+---
+- name: Test ping host all
+  hosts: web-servers
+  #become: yes
+  gather_facts: yes
+  tasks:
+  - name: Ping server {{inventory_hostname}}
+    ping:
