@@ -1,5 +1,5 @@
 [web-servers:children]
-web1
+
 web2
 web3
 lb1
