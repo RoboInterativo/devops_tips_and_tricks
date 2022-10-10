@@ -1,0 +1,42 @@
+---
+- name: Test ping host all 
+  hosts: web-servers 
+  #become: yes
+  gather_facts: yes
+  tasks:
+  - name: Ping server {{inventory_hostname}}
+    ping:
+
+  - name: DEBUG
+    debug: 
+      var: inventory_hostname
+
+  - name: HOST
+    shell: hostname
+ 
+  - name: apt
+    apt:
+      name: nginx
+      state: present
+  
+  - name: Copy using inline content
+    template:
+      src: page.html
+      dest: /var/www/html/index.htm
+
+  - name: Make sure a service is running
+    service:
+      state: stopped
+      name:  nginx
+
+  - name: Copy Nginx conf
+    copy:
+      src: site.conf
+      dest: /etc/nginx/sites-available/default
+    when: inventory_hostname=="lb1"
+
+
+  - name: Make sure a service is running
+    service:
+      state: started
+      name:  nginx
