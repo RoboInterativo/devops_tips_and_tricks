@@ -15,6 +15,8 @@ def create_projects(project_name,group_id):
            "description": "New Project",
            "initialize_with_readme": "true"
            }
+    if group_id:
+      data.append ({"namespace_id": group_id })
     url = f'{base_url}/projects'
 
     headers = { "PRIVATE-TOKEN": TOKEN,
@@ -25,20 +27,14 @@ def create_projects(project_name,group_id):
     print(json.dumps (  r.json(), indent=4 ))
 
 
-    # echo "Project_name="$project_name", group_id="$group_id
-    #
-    # data=`echo '{ "name": "project_name", '$name_space_block'"description": "New Project",    "initialize_with_readme": "true"}' | sed 's/project_name/'$1'/g'|sed 's/namespace_id_p/'$group_id'/g' `
-    #
-    # url=$base_url'/projects'
-    # curl --request POST --header "PRIVATE-TOKEN: ${TOKEN}" \
-    #    --header "Content-Type: application/json" \
-    #    --data "${data}"  \
-    #    --url $url |jq
-    #
-    # }
+
 def main():
     if sys.argv[1]=="--create-project":
         project_name=sys.argv[2]
+        try:
+            group_id=sys.argv[3]
+        except:
+            print ("1")
         create_projects(project_name,None)
 
 if __name__ == '__main__':
