@@ -18,11 +18,19 @@ function display_usage() {
       \e[1;34m $0  \e[0m \e[1;32m--get-groups\e[0m
     Create group
       \e[1;34m $0  \e[0m \e[1;32m--create-group\e[0m GROUP_NAME
+  Users:
+    Get users
+      \e[1;34m $0  \e[0m \e[1;32m--get-users\e[0m
+    Create user
+      \e[1;34m $0  \e[0m \e[1;32m--create-user\e[0m GROUP_NAME
+
 
 
   "
 
 }
+# PUT /groups/:id/members/:user_id
+# PUT /projects/:id/members/:user_id
 function create_groups() {
 data=`echo '{ "name": "group_name",   "path": "group_name"}'| sed 's/group_name/'$1'/g'`
 
@@ -32,6 +40,24 @@ curl -v --request POST --header "PRIVATE-TOKEN: ${TOKEN}" \
     --header "Content-Type: application/json" \
     --data "${data}" \
     $url |jq
+
+}
+function get_users() {
+echo GET
+url="$base_url/users"
+echo $url
+ answer=`curl -v  --header "PRIVATE-TOKEN: ${TOKEN}" \
+     --header "Content-Type: application/json" \
+     $url `
+echo "${answer}" |jq
+    #  short_result=$(echo "${answer}" | jq '[.[] | {
+    # group_id: .id,
+    # group_name: .name,
+    # group_path: .path,
+    # project_creation_level: .project_creation_level
+    # }]')
+    #
+    #   echo "${short_result}"
 
 }
 function get_groups() {
@@ -195,6 +221,11 @@ while [[ $# -gt 0 ]]; do
       action=getGroups
       #shift
       ;;
+      --get-users)
+      # p_project_id="$1"
+      action=getUsers
+      #shift
+      ;;
       --project_id)
       p_project_id="$1"
       shift
@@ -208,6 +239,9 @@ done
 case "${action}" in
   createGroup)
     create_groups "${p_group_name}"
+  ;;
+  getUsers)
+    get_users
   ;;
   getGroups)
     get_groups
