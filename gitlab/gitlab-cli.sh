@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 base_url="http://test1.robointerativo.ru:8080/api/v4"
 function display_usage() {
-  echo echo "Usage: $0
+  echo  -e "
+  Usage: \e[1;34m $0  \e[0m
+
   Create project
-    $0 --create-project PROJECT_NAME [--group-id GROUP_ID] "
+  
+    \e[1;34m $0 E \e[0m \e[1;32m--create-project\e[0m PROJECT_NAME [\e[1;32m--group-id GROUP_ID]
+
+  Delete project
+    \e[1;34m $0 E \e[0m \e[1;32m--delete-project\e[0m  \e[1;32m--project_id\e[0m PROJECT_ID
+    \e[1;34m $0 E \e[0m \e[1;32m--delete-project\e[0m  \e[1;32m--project_name\e[0m PROJECT_NAME "
+
 }
 function create_groups() {
 data=`echo '{ "name": "group_name",   "path": "group_name"}'| sed 's/group_name/'$1'/g'`
@@ -16,7 +24,45 @@ curl -v --request POST --header "PRIVATE-TOKEN: ${TOKEN}" \
     $url |jq
 
 }
+function delete_projects_by_id() {
+echo delete
+url="$base_url/projects/$1"
+echo $url
+ curl -v --request DELETE --header "PRIVATE-TOKEN: ${TOKEN}" \
+     --header "Content-Type: application/json" \
+     $url |jq
+#     --data "${data}" \
+#     $url |jq
 
+}
+function delete_projects_name() {
+  echo delete
+  # cat 1 | jq -c '.[] | select( .name=="Diaspora Client")' | jq  '.id'
+}
+
+function delete_projects() {
+  local project_id=${2}
+  local project_name=${1}
+
+  if [ -z "${project_name}" ]; then
+
+  if [ -z "${project_id}" ]; then
+    display_usage
+    exit 1
+  else
+    echo "project name null, project_id good ${project_id}"
+    delete_projects_by_id $project_id
+
+  fi
+
+  else
+    echo project name good, project_id null
+
+
+  fi
+
+
+}
 function create_projects() {
   local project_name=${1}
   local group_id=${2}
@@ -50,9 +96,14 @@ function main {
   local p_project_name=
   local p_project_path=
   local p_group_id=
+  if [ -z "${1}" ]; then
+    display_usage
+    exit 1
+  fi
 while [[ $# -gt 0 ]]; do
     local param="$1"
     shift
+
 
     case "${param}" in
       --create-project)
@@ -64,6 +115,19 @@ while [[ $# -gt 0 ]]; do
       p_group_id="$1"
       shift
       ;;
+      --delete-project)
+      # p_project_id="$1"
+      action=deleteProject
+      #shift
+      ;;
+      --project_id)
+      p_project_id="$1"
+      shift
+      ;;
+      --project_name)
+      p_project_name="$1"
+      shift
+      ;;
     esac
 done
 case "${action}" in
@@ -72,7 +136,13 @@ case "${action}" in
 
       create_projects    "${p_project_name}" "${p_group_id}"
       ;;
+  deleteProject)
+      echo "name=$p_project_name  id=$p_project_id"
+
+      delete_projects   "${p_project_name}" "${p_project_id}"
+          ;;
   esac
 
 }
 main "$@"
+curl --help 123
