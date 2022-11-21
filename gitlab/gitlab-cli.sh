@@ -16,6 +16,10 @@ function display_usage() {
   Groups:
     Get groups
       \e[1;34m $0  \e[0m \e[1;32m--get-groups\e[0m
+    Create group
+      \e[1;34m $0  \e[0m \e[1;32m--create-group\e[0m GROUP_NAME
+
+
   "
 
 }
@@ -23,7 +27,7 @@ function create_groups() {
 data=`echo '{ "name": "group_name",   "path": "group_name"}'| sed 's/group_name/'$1'/g'`
 
 echo "${data}"
-
+url=$base_url'/groups'
 curl -v --request POST --header "PRIVATE-TOKEN: ${TOKEN}" \
     --header "Content-Type: application/json" \
     --data "${data}" \
@@ -151,6 +155,7 @@ function main {
   local p_project_name=
   local p_project_path=
   local p_group_id=
+  local p_group_name=
   if [ -z "${1}" ]; then
     display_usage
     exit 1
@@ -161,6 +166,11 @@ while [[ $# -gt 0 ]]; do
 
 
     case "${param}" in
+      --create-group)
+      p_group_name="$1"
+      action=createGroup
+      shift
+      ;;
       --create-project)
       p_project_name="$1"
       action=createProject
@@ -196,6 +206,9 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 case "${action}" in
+  createGroup)
+    create_groups "${p_group_name}"
+  ;;
   getGroups)
     get_groups
   ;;
