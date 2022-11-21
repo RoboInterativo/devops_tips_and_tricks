@@ -5,12 +5,12 @@ function display_usage() {
   Usage: \e[1;34m $0  \e[0m
 
   Create project
-  
-    \e[1;34m $0 E \e[0m \e[1;32m--create-project\e[0m PROJECT_NAME [\e[1;32m--group-id GROUP_ID]
+
+    \e[1;34m $0  \e[0m \e[1;32m--create-project\e[0m PROJECT_NAME [\e[1;32m--group-id\e[0m GROUP_ID]
 
   Delete project
-    \e[1;34m $0 E \e[0m \e[1;32m--delete-project\e[0m  \e[1;32m--project_id\e[0m PROJECT_ID
-    \e[1;34m $0 E \e[0m \e[1;32m--delete-project\e[0m  \e[1;32m--project_name\e[0m PROJECT_NAME "
+    \e[1;34m $0  \e[0m \e[1;32m--delete-project\e[0m  \e[1;32m--project_id\e[0m PROJECT_ID
+    \e[1;34m $0  \e[0m \e[1;32m--delete-project\e[0m  \e[1;32m--project_name\e[0m PROJECT_NAME "
 
 }
 function create_groups() {
@@ -22,6 +22,37 @@ curl -v --request POST --header "PRIVATE-TOKEN: ${TOKEN}" \
     --header "Content-Type: application/json" \
     --data "${data}" \
     $url |jq
+
+}
+function get_projects() {
+echo GET
+url="$base_url/projects"
+echo $url
+ answer=`curl -v  --header "PRIVATE-TOKEN: ${TOKEN}" \
+     --header "Content-Type: application/json" \
+     $url `
+
+    short_result=$(echo "${answer}" | jq '[.[] | {
+    project_id: .id,
+    project_name: .name,
+    project_path: .path,
+    group_name: .namespace.name,
+    group_path: .namespace.path,
+    path_with_namespace: .path_with_namespace,
+    ssh_url_to_repo: .ssh_url_to_repo,
+    http_url_to_repo: .http_url_to_repo,
+    container_registry_enabled: .container_registry_enabled,
+    issues_enabled: .issues_enabled,
+    merge_requests_enabled: .merge_requests_enabled,
+    wiki_enabled: .wiki_enabled,
+    builds_enabled: .builds_enabled,
+    snippets_enabled: .snippets_enabled,
+    shared_runners_enabled: .shared_runners_enabled,
+    lfs_enabled: .lfs_enabled,
+    request_access_enabled: .request_access_enabled
+    }]')
+
+      echo "${short_result}"
 
 }
 function delete_projects_by_id() {
@@ -120,6 +151,11 @@ while [[ $# -gt 0 ]]; do
       action=deleteProject
       #shift
       ;;
+      --get-projects)
+      # p_project_id="$1"
+      action=getProjects
+      #shift
+      ;;
       --project_id)
       p_project_id="$1"
       shift
@@ -131,6 +167,9 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 case "${action}" in
+  getProjects)
+    get_projects
+  ;;
   createProject)
       echo $p_project_name  $p_project_path $group_id
 
@@ -145,4 +184,3 @@ case "${action}" in
 
 }
 main "$@"
-curl --help 123
