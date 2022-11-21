@@ -3,14 +3,16 @@ base_url="http://test1.robointerativo.ru:8080/api/v4"
 function display_usage() {
   echo  -e "
   Usage: \e[1;34m $0  \e[0m
+  Projects:
+    Get projects
+      \e[1;34m $0  \e[0m \e[1;32m--get-projects\e[0m 
+    Create project
 
-  Create project
+      \e[1;34m $0  \e[0m \e[1;32m--create-project\e[0m PROJECT_NAME [\e[1;32m--group-id\e[0m GROUP_ID]
 
-    \e[1;34m $0  \e[0m \e[1;32m--create-project\e[0m PROJECT_NAME [\e[1;32m--group-id\e[0m GROUP_ID]
-
-  Delete project
-    \e[1;34m $0  \e[0m \e[1;32m--delete-project\e[0m  \e[1;32m--project_id\e[0m PROJECT_ID
-    \e[1;34m $0  \e[0m \e[1;32m--delete-project\e[0m  \e[1;32m--project_name\e[0m PROJECT_NAME "
+    Delete project
+      \e[1;34m $0  \e[0m \e[1;32m--delete-project\e[0m  \e[1;32m--project_id\e[0m PROJECT_ID
+      \e[1;34m $0  \e[0m \e[1;32m--delete-project\e[0m  \e[1;32m--project_name\e[0m PROJECT_NAME "
 
 }
 function create_groups() {
