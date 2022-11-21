@@ -5,14 +5,18 @@ function display_usage() {
   Usage: \e[1;34m $0  \e[0m
   Projects:
     Get projects
-      \e[1;34m $0  \e[0m \e[1;32m--get-projects\e[0m 
+      \e[1;34m $0  \e[0m \e[1;32m--get-projects\e[0m
     Create project
 
       \e[1;34m $0  \e[0m \e[1;32m--create-project\e[0m PROJECT_NAME [\e[1;32m--group-id\e[0m GROUP_ID]
 
     Delete project
       \e[1;34m $0  \e[0m \e[1;32m--delete-project\e[0m  \e[1;32m--project_id\e[0m PROJECT_ID
-      \e[1;34m $0  \e[0m \e[1;32m--delete-project\e[0m  \e[1;32m--project_name\e[0m PROJECT_NAME "
+      \e[1;34m $0  \e[0m \e[1;32m--delete-project\e[0m  \e[1;32m--project_name\e[0m PROJECT_NAME
+  Groups:
+    Get groups
+      \e[1;34m $0  \e[0m \e[1;32m--get-groups\e[0m
+  "
 
 }
 function create_groups() {
@@ -24,6 +28,24 @@ curl -v --request POST --header "PRIVATE-TOKEN: ${TOKEN}" \
     --header "Content-Type: application/json" \
     --data "${data}" \
     $url |jq
+
+}
+function get_groups() {
+echo GET
+url="$base_url/groups"
+echo $url
+ answer=`curl -v  --header "PRIVATE-TOKEN: ${TOKEN}" \
+     --header "Content-Type: application/json" \
+     $url `
+
+     short_result=$(echo "${answer}" | jq '[.[] | {
+    group_id: .id,
+    group_name: .name,
+    group_path: .path,
+    project_creation_level: .project_creation_level
+    }]')
+
+      echo "${short_result}"
 
 }
 function get_projects() {
@@ -158,6 +180,11 @@ while [[ $# -gt 0 ]]; do
       action=getProjects
       #shift
       ;;
+      --get-groups)
+      # p_project_id="$1"
+      action=getGroups
+      #shift
+      ;;
       --project_id)
       p_project_id="$1"
       shift
@@ -169,6 +196,9 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 case "${action}" in
+  getGroups)
+    get_groups
+  ;;
   getProjects)
     get_projects
   ;;
